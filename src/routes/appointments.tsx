@@ -24,8 +24,8 @@ function Schedule() {
   const [date, setDate] = useState(todayISO());
   const [editing, setEditing] = useState<Appointment | null>(null);
   const doctors = d.doctors.filter((x) => x.active);
-  const [oh] = d.settings.openAt.split(":").map(Number);
-  const [ch] = d.settings.closeAt.split(":").map(Number);
+  const oh = Number(d.settings.openAt.split(":")[0]) || 9;
+  const ch = Number(d.settings.closeAt.split(":")[0]) || 17;
   const slots: string[] = [];
   for (let h = oh; h < ch; h++) { slots.push(`${String(h).padStart(2, "0")}:00`); slots.push(`${String(h).padStart(2, "0")}:30`); }
   const day = d.appointments.filter((a) => a.date === date);

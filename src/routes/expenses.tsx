@@ -16,12 +16,12 @@ export const Route = createFileRoute("/expenses")({
   component: Expenses,
 });
 
-const categories = ["مواد طبية", "رواتب", "إيجار", "فواتير خدمات", "صيانة", "أخرى"];
+const categories: string[] = ["مواد طبية", "رواتب", "إيجار", "فواتير خدمات", "صيانة", "أخرى"];
 
 function Expenses() {
   const d = useClinic();
   const [open, setOpen] = useState(false);
-  const [f, setF] = useState({ date: todayISO(), category: categories[0], description: "", amount: 0 });
+  const [f, setF] = useState({ date: todayISO(), category: "مواد طبية", description: "", amount: 0 });
   const cur = d.settings.currency;
   const month = todayISO().slice(0, 7);
   const monthExp = d.expenses.filter((e) => e.date.startsWith(month)).reduce((s, e) => s + e.amount, 0);

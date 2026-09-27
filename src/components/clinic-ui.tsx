@@ -11,7 +11,7 @@ const navItems = [
   { to: "/invoices", label: "الفواتير والدفعات", icon: Receipt },
   { to: "/expenses", label: "المصاريف", icon: Wallet },
   { to: "/settings", label: "الإعدادات والخدمات", icon: Settings },
-] as const;
+] as { to: "/" | "/appointments" | "/patients" | "/invoices" | "/expenses" | "/settings"; label: string; icon: LucideIcon }[];
 
 export function Logo() {
   return (

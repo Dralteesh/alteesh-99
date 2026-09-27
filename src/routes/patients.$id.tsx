@@ -116,7 +116,7 @@ function DentalChart({ patientId }: { patientId: string }) {
   );
 }
 
-function ToothModal({ tooth, initial, onClose, onSave }: { tooth: number; initial?: { condition: ToothCondition; note: string }; onClose: () => void; onSave: (c: ToothCondition, n: string) => void }) {
+function ToothModal({ tooth, initial, onClose, onSave }: { tooth: number; initial?: { condition: ToothCondition; note: string } | undefined; onClose: () => void; onSave: (c: ToothCondition, n: string) => void }) {
   const [c, setC] = useState<ToothCondition>(initial?.condition ?? "healthy");
   const [note, setNote] = useState(initial?.note ?? "");
   return (
