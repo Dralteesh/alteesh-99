@@ -5,7 +5,7 @@ import { Badge, Btn, EmptyState, PageHeading } from "@/components/clinic-ui";
 import { PatientForm, emptyPatient } from "@/components/patient-form";
 import { age, invoicePaid, invoiceTotal, fmtMoney, shortDate, useClinic } from "@/lib/dental-store";
 
-export const Route = createFileRoute("/patients/")({
+export const Route = createFileRoute("/_authenticated/patients/")({
   head: () => ({
     meta: [
       { title: "المرضى — Alteesh Clinic" },

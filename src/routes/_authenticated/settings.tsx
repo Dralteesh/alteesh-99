@@ -4,7 +4,7 @@ import { Plus, RotateCcw, Stethoscope, Trash2 } from "lucide-react";
 import { Btn, Field, PageHeading } from "@/components/clinic-ui";
 import { fmtMoney, resetData, uid, update, useClinic, type Settings } from "@/lib/dental-store";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "الإعدادات والخدمات — Alteesh Clinic" },
