@@ -3,7 +3,7 @@ import { Activity, CalendarDays, Check, Plus, Receipt, UsersRound, Wallet } from
 import { Badge, EmptyState, PageHeading, StatCard, statusTone } from "@/components/clinic-ui";
 import { fmtDate, fmtMoney, invoicePaid, invoiceTotal, statusLabels, todayISO, useClinic } from "@/lib/dental-store";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "نظرة عامة — Alteesh Clinic" },

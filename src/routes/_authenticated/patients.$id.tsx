@@ -5,7 +5,7 @@ import { Badge, Btn, EmptyState, Field, Modal, PageHeading, statusTone } from "@
 import { PatientForm } from "@/components/patient-form";
 import { age, conditionLabels, fmtMoney, invoicePaid, invoiceTotal, shortDate, statusLabels, todayISO, uid, update, useClinic, type ToothCondition } from "@/lib/dental-store";
 
-export const Route = createFileRoute("/patients/$id")({
+export const Route = createFileRoute("/_authenticated/patients/$id")({
   head: () => ({
     meta: [
       { title: "ملف المريض — Alteesh Clinic" },

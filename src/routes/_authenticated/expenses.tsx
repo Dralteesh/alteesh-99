@@ -4,7 +4,7 @@ import { Plus, Trash2, Wallet } from "lucide-react";
 import { Badge, Btn, EmptyState, Field, Modal, PageHeading, StatCard } from "@/components/clinic-ui";
 import { fmtMoney, shortDate, todayISO, uid, update, useClinic } from "@/lib/dental-store";
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute("/_authenticated/expenses")({
   head: () => ({
     meta: [
       { title: "المصاريف — Alteesh Clinic" },

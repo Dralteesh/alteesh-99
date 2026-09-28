@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { Btn, Field, Modal, PageHeading } from "@/components/clinic-ui";
 import { fmtDate, statusLabels, todayISO, uid, update, useClinic, type Appointment, type AppointmentStatus } from "@/lib/dental-store";
 
-export const Route = createFileRoute("/appointments")({
+export const Route = createFileRoute("/_authenticated/appointments")({
   head: () => ({
     meta: [
       { title: "جدول المواعيد — Alteesh Clinic" },
