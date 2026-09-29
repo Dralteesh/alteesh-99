@@ -1,8 +1,11 @@
 import { type ReactNode, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { CalendarDays, LayoutDashboard, Menu, Receipt, Settings, UsersRound, Wallet, X, type LucideIcon } from "lucide-react";
-import logo from "@/assets/alteesh-clinic-logo.png";
-import { fmtDate, todayISO, useClinic, type AppointmentStatus } from "@/lib/dental-store";
+import { CalendarDays, LayoutDashboard, LogOut, Menu, Palette, ShieldCheck, Receipt, Settings, UsersRound, Wallet, X, type LucideIcon } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useMe, roleLabels } from "@/lib/auth";
+import { useBranding, BrandingStyle } from "@/lib/branding";
+import { fmtDate, todayISO, type AppointmentStatus } from "@/lib/dental-store";
 
 const navItems = [
   { to: "/", label: "نظرة عامة", icon: LayoutDashboard },
@@ -10,16 +13,20 @@ const navItems = [
   { to: "/patients", label: "المرضى", icon: UsersRound },
   { to: "/invoices", label: "الفواتير والدفعات", icon: Receipt },
   { to: "/expenses", label: "المصاريف", icon: Wallet },
-  { to: "/settings", label: "الإعدادات والخدمات", icon: Settings },
-] as { to: "/" | "/appointments" | "/patients" | "/invoices" | "/expenses" | "/settings"; label: string; icon: LucideIcon }[];
+  { to: "/settings", label: "الإعدادات والخدمات", icon: Settings, admin: true },
+  { to: "/users", label: "المستخدمون", icon: ShieldCheck, admin: true },
+  { to: "/branding", label: "تخصيص المظهر", icon: Palette, admin: true },
+] as { to: "/" | "/appointments" | "/patients" | "/invoices" | "/expenses" | "/settings" | "/users" | "/branding"; label: string; icon: LucideIcon; admin?: boolean }[];
+navItems[3].admin = true; navItems[4].admin = true;
 
 export function Logo() {
+  const b = useBranding();
   return (
     <div className="flex items-center gap-3">
-      <div className="logo-mark"><img src={logo} alt="شعار Alteesh Clinic" /></div>
+      <div className="logo-mark"><img src={b.logo} alt={`شعار ${b.clinic_name}`} /></div>
       <div>
-        <div className="font-display text-base font-bold leading-tight text-primary">Alteesh Clinic</div>
-        <div className="text-[10px] tracking-wide text-muted-foreground">إدارة عيادة الأسنان</div>
+        <div className="font-display text-base font-bold leading-tight text-primary">{b.clinic_name}</div>
+        <div className="text-[10px] tracking-wide text-muted-foreground">{b.tagline}</div>
       </div>
     </div>
   );
@@ -28,9 +35,13 @@ export function Logo() {
 export function Shell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
-  const data = useClinic();
+  const me = useMe();
+  const qc = useQueryClient();
+  const isAdmin = me.data?.role === "admin";
+  const signOut = async () => { await qc.cancelQueries(); qc.clear(); await supabase.auth.signOut(); location.replace("/auth"); };
   return (
     <div dir="rtl" className="min-h-[100dvh] bg-background">
+      <BrandingStyle />
       <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
         <div className="mb-10 flex items-center justify-between px-1">
           <Logo />
@@ -38,7 +49,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
         <div className="mb-3 px-3 text-[10px] font-bold tracking-[.16em] text-muted-foreground">مساحة العمل</div>
         <nav className="space-y-1">
-          {navItems.map((item) => {
+          {navItems.filter((i) => !i.admin || isAdmin).map((item) => {
             const Icon = item.icon;
             const active = item.to === "/" ? path === "/" : path.startsWith(item.to);
             return (
@@ -53,6 +64,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="sidebar-note mt-auto">
           <div className="mb-3 flex items-center gap-2 text-primary"><div className="h-2 w-2 rounded-full bg-primary" /><span className="text-xs font-bold">النظام يعمل بشكل طبيعي</span></div>
           <p className="text-xs leading-6 text-muted-foreground">بياناتك محفوظة محلياً على هذا الجهاز.</p>
+          <button onClick={signOut} className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-destructive hover:underline"><LogOut size={14} />تسجيل الخروج</button>
         </div>
       </aside>
       {open && <button className="fixed inset-0 z-30 bg-foreground/20 md:hidden" aria-label="إغلاق القائمة" onClick={() => setOpen(false)} />}
@@ -62,10 +74,11 @@ export function Shell({ children }: { children: ReactNode }) {
           <div className="hidden text-sm text-muted-foreground md:block">{fmtDate(todayISO())}</div>
           <div className="mr-auto flex items-center gap-3">
             <div className="hidden text-left sm:block">
-              <div className="text-xs text-muted-foreground">{data.settings.clinicName}</div>
-              <div className="text-sm font-bold">{data.settings.branch}</div>
+              <div className="text-sm font-bold">{me.data?.name}</div>
+              <div className="text-xs text-muted-foreground">{me.data?.role ? roleLabels[me.data.role] : ""}</div>
             </div>
-            <div className="avatar avatar-coral h-10 w-10">{data.settings.clinicName.slice(0, 1)}</div>
+            <div className="avatar avatar-coral h-10 w-10">{(me.data?.name ?? "?").slice(0, 1)}</div>
+            <button className="icon-btn" onClick={signOut} aria-label="تسجيل الخروج"><LogOut size={16} /></button>
           </div>
         </header>
         <div className="page-wrap">{children}</div>

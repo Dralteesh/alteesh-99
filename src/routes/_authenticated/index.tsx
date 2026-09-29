@@ -29,7 +29,7 @@ function Dashboard() {
 
   return (
     <>
-      <PageHeading eyebrow={fmtDate(t)} title="أهلاً بك في العيادة" description="إليك صورة سريعة عن سير العمل اليوم."
+      <PageHeading eyebrow={fmtDate(t)} title={br.welcome_title} description={br.welcome_text}
         action={<Link to="/appointments" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition hover:brightness-95"><CalendarDays size={17} />فتح جدول المواعيد</Link>} />
       <div className="mb-7 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="مواعيد اليوم" value={`${todays.length}`} note={`${todays.filter((a) => a.status === "confirmed").length} مؤكدة`} icon={CalendarDays} color="teal" />
