@@ -17,7 +17,7 @@ const navItems = [
   { to: "/users", label: "المستخدمون", icon: ShieldCheck, admin: true },
   { to: "/branding", label: "تخصيص المظهر", icon: Palette, admin: true },
 ] as { to: "/" | "/appointments" | "/patients" | "/invoices" | "/expenses" | "/settings" | "/users" | "/branding"; label: string; icon: LucideIcon; admin?: boolean }[];
-navItems[3].admin = true; navItems[4].admin = true;
+navItems[3]!.admin = true; navItems[4]!.admin = true;
 
 export function Logo() {
   const b = useBranding();
