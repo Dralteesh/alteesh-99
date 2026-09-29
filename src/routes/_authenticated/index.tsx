@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Activity, CalendarDays, Check, Plus, Receipt, UsersRound, Wallet } from "lucide-react";
 import { Badge, EmptyState, PageHeading, StatCard, statusTone } from "@/components/clinic-ui";
+import { useBranding } from "@/lib/branding";
 import { fmtDate, fmtMoney, invoicePaid, invoiceTotal, statusLabels, todayISO, useClinic } from "@/lib/dental-store";
 
 export const Route = createFileRoute("/_authenticated/")({
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/")({
 
 function Dashboard() {
   const d = useClinic();
+  const br = useBranding();
   const t = todayISO();
   const todays = d.appointments.filter((a) => a.date === t && a.status !== "cancelled").sort((a, b) => a.time.localeCompare(b.time));
   const monthPrefix = t.slice(0, 7);
