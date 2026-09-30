@@ -85,11 +85,40 @@ let state: ClinicData = seed();
 let loaded = false;
 const listeners = new Set<() => void>();
 const serverSnapshot = seed();
+const emit = () => listeners.forEach((l) => l());
 
+async function db() { return (await import("@/integrations/supabase/client")).supabase; }
+
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
+let lastSaved = "";
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const supabase = await db();
+    lastSaved = JSON.stringify(state);
+    await supabase.from("clinic_data").upsert({ id: 1, data: state as never, updated_at: new Date().toISOString() });
+  }, 400);
+}
+
+/** Loads shared clinic data from the backend and keeps it live across users. */
 function load() {
   if (loaded || typeof window === "undefined") return;
   loaded = true;
-  try { const raw = localStorage.getItem(KEY); if (raw) state = { ...seed(), ...JSON.parse(raw) }; } catch { /* ignore */ }
+  (async () => {
+    const supabase = await db();
+    const { data: row, error } = await supabase.from("clinic_data").select("data").eq("id", 1).maybeSingle();
+    if (error) return;
+    if (row?.data) { state = { ...seed(), ...(row.data as Partial<ClinicData>) }; emit(); }
+    else {
+      // First run: migrate any data saved on this device, otherwise use examples.
+      try { const raw = localStorage.getItem(KEY); if (raw) { state = { ...seed(), ...JSON.parse(raw) }; emit(); } } catch { /* ignore */ }
+      scheduleSave();
+    }
+    supabase.channel("clinic_data").on("postgres_changes", { event: "*", schema: "public", table: "clinic_data" }, (p) => {
+      const d = (p.new as { data?: ClinicData })?.data;
+      if (d && JSON.stringify(d) !== lastSaved) { state = { ...seed(), ...d }; emit(); }
+    }).subscribe();
+  })();
 }
 
 export function update(fn: (d: ClinicData) => ClinicData, activity?: { type: Activity["type"]; text: string }) {
@@ -97,8 +126,8 @@ export function update(fn: (d: ClinicData) => ClinicData, activity?: { type: Act
   let next = fn(state);
   if (activity) next = { ...next, activities: [{ id: uid(), ...activity, at: new Date().toISOString() }, ...next.activities].slice(0, 40) };
   state = next;
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* ignore */ }
-  listeners.forEach((l) => l());
+  emit();
+  scheduleSave();
 }
 
 export function resetData() { update(() => seed(), { type: "system", text: "تمت إعادة البيانات التجريبية" }); }
