@@ -63,7 +63,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </nav>
         <div className="sidebar-note mt-auto">
           <div className="mb-3 flex items-center gap-2 text-primary"><div className="h-2 w-2 rounded-full bg-primary" /><span className="text-xs font-bold">النظام يعمل بشكل طبيعي</span></div>
-          <p className="text-xs leading-6 text-muted-foreground">بياناتك محفوظة محلياً على هذا الجهاز.</p>
+          <p className="text-xs leading-6 text-muted-foreground">البيانات محفوظة ومشتركة بين كل مستخدمي العيادة.</p>
           <button onClick={signOut} className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-destructive hover:underline"><LogOut size={14} />تسجيل الخروج</button>
         </div>
       </aside>
